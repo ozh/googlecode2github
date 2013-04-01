@@ -1,10 +1,12 @@
-A small project with some helper scripts for moving a project of yours on
-[Google Code project hosting](http://code.google.com/hosting/) to
-[Github](https://github.com/).
+# Convert wiki from Google Code to Github
 
-See this blog post giving example usage: <http://trentm.com/2012/03/google-code-to-github.html>
+Fork of [trentm/googlecode2github](https://github.com/trentm/googlecode2github)
 
+I just needed the wiki converting script, modified to suit my needs. Other files removed.
 
-# wiki conversion
+# Usage
 
-- <http://code.google.com/p/support/wiki/WikiSyntax>
+* download Google Code wiki files locally, from http://PROJECT.googlecode.com/svn/wiki/
+* convert with script: `python wikiconvert.py GITHUB_NAME/GITHUB_PROJ source_dir target_dir`
+
+(the `GITHUB_NAME` and `GITHUB_PROJ` are not actually needed, I didn't bother to edit the script further)

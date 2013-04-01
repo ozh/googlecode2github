@@ -49,15 +49,12 @@ def convert_file(proj_id, src_path, dst_dir):
     text = '\n'.join(body_lines)
     s_from_hash = {}
 
-    # Pull out pre-blocks.
-    def sub_pre_block(match):
-        pre = match.group(1)
-        hash = md5(pre.encode('utf8')).hexdigest()
-        s_from_hash[hash] = _indent(pre)
-        return hash
-    text = re.compile(r'^{{{\n(.*?)^}}}', re.M|re.S).sub(sub_pre_block, text)
+    # Multiline code blocks
+    text = re.compile(r'^{{{\s*$', re.M).sub(r'```php', text)
+    text = re.compile(r'^}}}\s*$', re.M).sub(r'```\n', text)
 
     # Headings.
+    text = re.compile(r'^====(.*?)====\s*$', re.M).sub(lambda m: "#### %s\n"%m.group(1).strip(), text)
     text = re.compile(r'^===(.*?)===\s*$', re.M).sub(lambda m: "### %s\n"%m.group(1).strip(), text)
     text = re.compile(r'^==(.*?)==\s*$', re.M).sub(lambda m: "## %s\n"%m.group(1).strip(), text)
     text = re.compile(r'^=(.*?)=\s*$', re.M).sub(lambda m: "# %s\n"%m.group(1).strip(), text)
@@ -100,7 +97,7 @@ def convert_file(proj_id, src_path, dst_dir):
         s_from_hash[hash] = s
         return hash
     text = re.compile(r'(?<!\[)\[([^\s]+)\s+(.*?)\](?!\])', re.S).sub(sub_link, text)
-
+	
     # Italics, bold.
     # in*ter*bold: (?<=\w)(\*\w+?\*)(?=\w)
     text = re.compile(r'(?<![*\w])\*([^*]+?)\*(?![*\w])', re.S).sub(r'**\1**', text)
@@ -121,9 +118,9 @@ def convert_file(proj_id, src_path, dst_dir):
     base = splitext(basename(src_path))[0]
     gh_page_name = _gh_page_name_from_gc_page_name(base)
     dst_path = join(dst_dir, gh_page_name+".md")
-    if not exists(dst_path) or codecs.open(dst_path, 'r', 'utf-8').read() != text:
-        codecs.open(dst_path, 'w', 'utf-8').write(text)
-        log("wrote '%s'" % dst_path)
+    #if not exists(dst_path) or codecs.open(dst_path, 'r', 'utf-8').read() != text:
+    codecs.open(dst_path, 'w', 'utf-8').write(text)
+    log("wrote '%s'" % dst_path)
 
 
 #---- internal support stuff
@@ -141,6 +138,6 @@ def _gh_page_name_from_gc_page_name(gc):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print __doc__
+        print( __doc__ )
         sys.exit(1)
     convert_dir(sys.argv[1], sys.argv[2], sys.argv[3])
